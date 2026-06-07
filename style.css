@@ -1,22 +1,427 @@
+/* =============================================
+   WEDDING CARD — LOTUS & WHITE ELEGANT THEME
+   ============================================= */
+
+:root {
+  --lotus:        #c9a0b4;        /* muted dusty rose / lotus blush */
+  --lotus-deep:   #a67a95;        /* deeper petal accent */
+  --lotus-light:  #f0dde8;        /* palest petal wash */
+  --gold:         #c8a96e;        /* warm champagne gold */
+  --gold-light:   #e8d5a8;        /* pale gold shimmer */
+  --ivory:        #fdfaf6;        /* warm white */
+  --parchment:    #f7f2ea;        /* card background */
+  --ink:          #3a2e35;        /* near-black for text */
+  --ink-soft:     #6b5760;        /* medium for body text */
+  --border:       rgba(201,160,180,0.35);
+
+  --font-display: 'Cinzel', serif;
+  --font-script:  'Cormorant Garamond', serif;
+  --font-body:    'Raleway', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 30% 20%, #f5e8ef 0%, #ede3d8 35%, #ddd4ca 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  position: relative;
 }
 
-#app {
-    text-align: center;
-    padding: 2rem;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-radius: 8px;
+/* ── Floating petal particles ── */
+.petals-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
 }
 
-h1 {
-    color: #d4af37; /* Gold color */
+.petal {
+  position: absolute;
+  top: -60px;
+  border-radius: 150% 0 150% 0;
+  opacity: 0;
+  animation: petalFall linear infinite;
 }
+
+@keyframes petalFall {
+  0%   { transform: translateY(0) rotate(0deg) translateX(0);  opacity: 0; }
+  10%  { opacity: 0.55; }
+  85%  { opacity: 0.3; }
+  100% { transform: translateY(110vh) rotate(540deg) translateX(60px); opacity: 0; }
+}
+
+/* ── Ripple on click ── */
+.ripple-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ripple-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--lotus);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0.6;
+  animation: rippleExpand 1.2s ease-out forwards;
+}
+
+@keyframes rippleExpand {
+  to { transform: translate(-50%, -50%) scale(6); opacity: 0; }
+}
+
+/* ── Card wrapper ── */
+.card-wrapper {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  width: min(680px, 96vw);
+}
+
+/* ── Outer frame ── */
+.card-frame {
+  position: relative;
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 0 0 6px rgba(201,160,180,0.12),
+    0 0 0 12px rgba(201,160,180,0.07),
+    0 30px 80px rgba(58,46,53,0.18),
+    0 10px 30px rgba(58,46,53,0.10);
+  padding: 3.5rem 3rem;
+  border-radius: 2px;
+
+  /* Subtle grain texture */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, #fdfcf8 0%, #f7f2ea 50%, #f3ece0 100%);
+}
+
+/* Decorative inner border lines */
+.card-frame::before,
+.card-frame::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+.card-frame::before {
+  inset: 14px;
+  border: 0.5px solid rgba(201,160,180,0.4);
+}
+.card-frame::after {
+  inset: 18px;
+  border: 0.5px solid rgba(200,169,110,0.2);
+}
+
+/* ── Corner ornaments ── */
+.corner {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  z-index: 3;
+}
+.corner--tl { top: -4px; left: -4px; }
+.corner--tr { top: -4px; right: -4px; }
+.corner--bl { bottom: -4px; left: -4px; }
+.corner--br { bottom: -4px; right: -4px; }
+
+/* ── Card inner ── */
+.card-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+/* ── Header ── */
+.card-header {
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.card-header.visible { opacity: 1; transform: translateY(0); }
+
+.pre-title {
+  font-family: var(--font-body);
+  font-weight: 200;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 1.2rem;
+}
+
+/* ── Lotus divider ── */
+.divider-lotus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.6rem 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 0.5px;
+  background: linear-gradient(to right, transparent, var(--lotus-deep), transparent);
+  max-width: 160px;
+}
+
+.lotus-icon {
+  width: 52px;
+  height: 44px;
+  filter: drop-shadow(0 2px 6px rgba(166,122,149,0.3));
+  animation: floatLotus 5s ease-in-out infinite;
+}
+
+@keyframes floatLotus {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+/* ── Names ── */
+.names-section {
+  margin: 1.4rem 0 0.8rem;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+}
+.names-section.visible { opacity: 1; transform: translateY(0); }
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.8rem, 8vw, 4.6rem);
+  color: var(--ink);
+  letter-spacing: 0.12em;
+  line-height: 1.05;
+  text-shadow: 0 2px 12px rgba(201,160,180,0.25);
+  position: relative;
+  display: inline-block;
+}
+
+.name--bride {
+  background: linear-gradient(135deg, var(--ink) 30%, var(--lotus-deep) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.name--groom {
+  background: linear-gradient(135deg, var(--lotus-deep) 0%, var(--ink) 70%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ampersand-wrap {
+  margin: 0.1rem 0;
+}
+
+.ampersand {
+  font-family: var(--font-script);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  color: var(--gold);
+  display: block;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(200,169,110,0.4);
+  animation: ampGlow 4s ease-in-out infinite;
+}
+
+@keyframes ampGlow {
+  0%, 100% { text-shadow: 0 2px 10px rgba(200,169,110,0.4); }
+  50%       { text-shadow: 0 4px 22px rgba(200,169,110,0.7), 0 0 40px rgba(200,169,110,0.2); }
+}
+
+/* ── Script line ── */
+.script-line {
+  font-family: var(--font-script);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  margin: 1rem 0 1.4rem;
+  opacity: 0;
+  transition: opacity 1s ease 0.6s;
+}
+.script-line.visible { opacity: 1; }
+
+/* ── Thin dividers ── */
+.divider-thin {
+  height: 0.5px;
+  background: linear-gradient(to right, transparent, var(--lotus) 25%, var(--gold) 50%, var(--lotus) 75%, transparent);
+  margin: 1.6rem 10%;
+  opacity: 0.55;
+}
+
+/* ── Details section ── */
+.details-section {
+  margin: 0.8rem 0 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease 0.9s, transform 1s ease 0.9s;
+}
+.details-section.visible { opacity: 1; transform: translateY(0); }
+
+.detail-block {
+  margin: 0.3rem 0;
+}
+
+.detail-label {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--lotus-deep);
+  margin-bottom: 0.3rem;
+}
+
+.detail-value {
+  font-family: var(--font-script);
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.detail-value--sub {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.lotus-separator {
+  margin: 0.8rem auto;
+  width: 40px;
+  height: 20px;
+  opacity: 0.65;
+}
+
+/* ── Footer ── */
+.card-footer {
+  margin-top: 0.8rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease 1.2s, transform 1s ease 1.2s;
+}
+.card-footer.visible { opacity: 1; transform: translateY(0); }
+
+.footer-text {
+  font-family: var(--font-body);
+  font-weight: 200;
+  font-size: 0.68rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 1.4rem;
+}
+
+.rsvp-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.6rem;
+}
+
+.rsvp-label {
+  font-family: var(--font-script);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+
+.rsvp-btn {
+  display: inline-block;
+  padding: 0.55rem 2.2rem;
+  border: 0.5px solid var(--lotus-deep);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--lotus-deep);
+  text-decoration: none;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.rsvp-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--lotus-light);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+  z-index: -1;
+}
+
+.rsvp-btn:hover {
+  color: var(--ink);
+  border-color: var(--lotus);
+  letter-spacing: 0.45em;
+}
+
+.rsvp-btn:hover::before { transform: scaleX(1); }
+
+.footer-lotus-row {
+  display: flex;
+  justify-content: center;
+  margin: 0.6rem 0 1rem;
+}
+
+.footer-lotus {
+  width: 48px;
+  height: 40px;
+  opacity: 0.5;
+}
+
+.footer-quote {
+  font-family: var(--font-script);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+}
+
+/* ── Shimmer on names hover ── */
+.name:hover {
+  filter: brightness(1.05);
+  transition: filter 0.3s;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .card-frame { padding: 2.5rem 1.5rem; }
+  .card-frame::before { inset: 10px; }
+  .card-frame::after  { inset: 14px; }
+  .corner { width: 56px; height: 56px; }
+  .divider-line { max-width: 80px; }
+  .detail-value { font-size: 0.95rem; }
+}
+
+/* ── Gold shimmer animation on load ── */
+@keyframes shimmerIn {
+  0%   { opacity: 0; letter-spacing: 0.35em; }
+  100% { opacity: 1; letter-spacing: 0.12em; }
+}
+
+.name--bride { animation: shimmerIn 1.4s ease 0.5s both; }
+.name--groom { animation: shimmerIn 1.4s ease 0.8s both; }
