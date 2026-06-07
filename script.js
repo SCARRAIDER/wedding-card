@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.scroll-container');
     const heroContent = document.querySelector('.hero-content');
     const lotus = document.querySelector('.lotus-layer');
+    const lotusOuter = document.querySelector('.lotus-petals-outer');
+    const lotusMid = document.querySelector('.lotus-petals-mid');
+    const lotusInner = document.querySelector('.lotus-petals-inner');
     const whiteFill = document.querySelector('.white-fill');
     const details = document.querySelector('.details-layer');
 
@@ -13,6 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let progress = -rect.top / (totalHeight - viewportHeight);
         progress = Math.max(0, Math.min(1, progress));
 
+        // Global rotation progress for the lotus (from 0 to 70% of total scroll)
+        const rotProgress = Math.max(0, Math.min(1, progress / 0.7));
+        const rotOuter = rotProgress * 90;
+        const rotMid = rotProgress * -120;
+        const rotInner = rotProgress * 180;
+
         // Animation Phases:
         // 0% - 30%: Lotus fades in on top of hero text (Starts immediately)
         if (progress <= 0.3) {
@@ -20,21 +29,29 @@ document.addEventListener('DOMContentLoaded', () => {
             lotus.style.opacity = p;
             lotus.style.transform = `scale(${0.5 + p * 0.5})`;
             
-            heroContent.style.opacity = 1 - (p * 0.5); // Start fading text slightly as lotus appears
+            // Immediate Rotations
+            lotusOuter.style.transform = `rotate(${rotOuter}deg)`;
+            lotusMid.style.transform = `rotate(${rotMid}deg)`;
+            lotusInner.style.transform = `rotate(${rotInner}deg)`;
+            
+            heroContent.style.opacity = 1 - (p * 0.5); 
             whiteFill.style.opacity = 0;
             details.style.opacity = 0;
         }
-        // 30% - 70%: Lotus zooms and covers text
+        // 30% - 70%: Lotus zooms and covers text + CONTINUOUS ROTATION
         else if (progress <= 0.7) {
             const p = (progress - 0.3) / 0.4;
             lotus.style.opacity = 1;
             const scale = 1 + (p * 40);
             lotus.style.transform = `scale(${scale})`;
             
-            // Fade out hero text as lotus gets big
+            // Continue Rotations
+            lotusOuter.style.transform = `rotate(${rotOuter}deg)`;
+            lotusMid.style.transform = `rotate(${rotMid}deg)`;
+            lotusInner.style.transform = `rotate(${rotInner}deg)`;
+            
             heroContent.style.opacity = 1 - (p * 2); 
             
-            // Fill screen with white towards end of zoom
             if (p > 0.8) {
                 whiteFill.style.opacity = (p - 0.8) * 5;
             } else {
