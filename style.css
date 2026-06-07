@@ -100,7 +100,7 @@ body {
 
 .lotus-petals-outer, .lotus-petals-mid, .lotus-petals-inner {
     transform-origin: center;
-    transition: transform 0.1s linear;
+    transform-box: view-box;
 }
 
 .lotus-svg {
