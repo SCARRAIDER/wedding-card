@@ -19,25 +19,38 @@ body {
     overflow-x: hidden;
 }
 
-/* Parallax Hero Section */
-.parallax-hero {
+.scroll-container {
+    height: 500vh; /* Total scroll depth */
+    position: relative;
+}
+
+.sticky-viewport {
+    position: sticky;
+    top: 0;
     height: 100vh;
     width: 100%;
-    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hero Layer (Background Image + Text) */
+.hero-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
                       url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-    background-attachment: fixed;
     background-position: center;
-    background-repeat: no-repeat;
     background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     color: white;
-}
-
-.hero-content {
     z-index: 1;
 }
 
@@ -63,8 +76,6 @@ body {
     transform: translateX(-50%);
     font-size: 0.8rem;
     letter-spacing: 2px;
-    text-transform: uppercase;
-    animation: bounce 2s infinite;
 }
 
 .arrow {
@@ -76,160 +87,69 @@ body {
     margin: 10px auto;
 }
 
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
-    40% {transform: translateX(-50%) translateY(-10px);}
-    60% {transform: translateX(-50%) translateY(-5px);}
+/* Lotus Layer */
+.lotus-layer {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    z-index: 5;
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
 }
 
-/* Details Section */
-.details-section {
-    padding: 100px 0;
-    background-color: var(--bg-color);
+.lotus-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.2));
 }
 
-.container {
-    padding: 20px;
+/* White Fill (Transitions screen to white) */
+.white-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0;
+    z-index: 4;
+}
+
+/* Details Layer */
+.details-layer {
+    position: absolute;
     width: 100%;
     max-width: 550px;
-    margin: 0 auto;
+    z-index: 10;
+    opacity: 0;
+    transform: translateY(30px);
+    pointer-events: none;
+}
+
+.details-layer.active {
+    pointer-events: all;
 }
 
 .card {
     background-color: var(--white);
-    padding: 80px 50px;
+    padding: 60px 40px;
     text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
     border: 1px solid #eee;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 1s ease-out;
+    margin: 0 20px;
 }
 
-.card.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Floral accents */
-.floral-top, .floral-bottom {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    opacity: 0.2;
-}
-
-.floral-top {
-    top: -30px;
-    right: -30px;
-    border-top: 50px solid var(--gold);
-    border-right: 50px solid var(--gold);
-    border-radius: 0 0 0 100%;
-}
-
-.floral-bottom {
-    bottom: -30px;
-    left: -30px;
-    border-bottom: 50px solid var(--gold);
-    border-left: 50px solid var(--gold);
-    border-radius: 0 100% 0 0%;
-}
-
-header .invite-text {
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    font-size: 0.8rem;
-    margin-bottom: 25px;
-}
-
-.couple-names {
-    font-family: 'Great Vibes', cursive;
-    font-size: 4.5rem;
-    color: var(--gold);
-    margin: 15px 0;
-    font-weight: normal;
-}
-
-.request-honor {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    line-height: 1.8;
-    margin-bottom: 50px;
-}
-
-.date-details {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    border-top: 1px solid var(--gold);
-    border-bottom: 1px solid var(--gold);
-    padding: 15px 0;
-    margin: 15px auto;
-    width: fit-content;
-}
-
-.day-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--gold);
-}
-
-.month, .year {
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    font-size: 1rem;
-}
-
-.day, .time {
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 0.85rem;
-}
-
-.venue {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    margin-top: 50px;
-    margin-bottom: 10px;
-}
-
-.reception {
-    margin-top: 60px;
-    font-style: italic;
-    color: var(--gold);
-    font-size: 1.1rem;
-}
-
-.rsvp-button {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 15px 40px;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.rsvp-button:hover {
-    background-color: var(--gold);
-    color: white;
-}
+/* Reusing card styles */
+.floral-top, .floral-bottom { position: absolute; width: 100px; height: 100px; opacity: 0.2; }
+.floral-top { top: -20px; right: -20px; border-top: 40px solid var(--gold); border-right: 40px solid var(--gold); border-radius: 0 0 0 100%; }
+.floral-bottom { bottom: -20px; left: -20px; border-bottom: 40px solid var(--gold); border-left: 40px solid var(--gold); border-radius: 0 100% 0 0%; }
+.couple-names { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: var(--gold); margin: 15px 0; }
+.date-details { display: flex; justify-content: center; gap: 15px; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 10px 0; width: fit-content; margin: 15px auto; }
+.day-number { font-size: 2.5rem; font-weight: bold; color: var(--gold); }
+.rsvp-button { display: inline-block; margin-top: 20px; padding: 12px 30px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; }
 
 @media (max-width: 600px) {
-    .invitation-title {
-        font-size: 3.5rem;
-    }
-    .couple-names {
-        font-size: 3.5rem;
-    }
-    .card {
-        padding: 50px 25px;
-    }
+    .invitation-title { font-size: 3rem; }
+    .lotus-layer { width: 200px; height: 200px; }
 }
