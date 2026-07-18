@@ -145,14 +145,22 @@ body {
     margin: 0 20px;
 }
 
-/* Reusing card styles */
-.floral-top, .floral-bottom { position: absolute; width: 100px; height: 100px; opacity: 0.2; }
-.floral-top { top: -20px; right: -20px; border-top: 40px solid var(--gold); border-right: 40px solid var(--gold); border-radius: 0 0 0 100%; }
-.floral-bottom { bottom: -20px; left: -20px; border-bottom: 40px solid var(--gold); border-left: 40px solid var(--gold); border-radius: 0 100% 0 0%; }
+/* Golden rose corner decorations */
+.card { position: relative; overflow: hidden; }
+.rose { position: absolute; width: 110px; height: 110px; opacity: 0.85; pointer-events: none; }
+.rose-top { top: -10px; right: -10px; }
+.rose-bottom { bottom: -10px; left: -10px; transform: rotate(180deg); }
 .couple-names { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: var(--gold); margin: 15px 0; }
 .date-details { display: flex; justify-content: center; gap: 15px; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 10px 0; width: fit-content; margin: 15px auto; }
 .day-number { font-size: 2.5rem; font-weight: bold; color: var(--gold); }
-.rsvp-button { display: inline-block; margin-top: 20px; padding: 12px 30px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; }
+.invite-text { line-height: 1.8; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+.guest-name { text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin: 20px 0 10px; }
+.guest { font-family: 'Great Vibes', cursive; text-transform: none; font-size: 1.6rem; color: var(--gold); letter-spacing: 0; }
+.request-honor { text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+.venue { text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px; }
+.address { line-height: 1.6; }
+.reception { font-size: 0.9rem; line-height: 1.7; margin-top: 25px; }
+.rsvp-info { margin-top: 25px; font-size: 0.75rem; letter-spacing: 1px; color: #888; }
 
 @media (max-width: 600px) {
     .invitation-title { font-size: 3rem; }

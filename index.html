@@ -3,13 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wedding Invitation | Alex & Sam</title>
+    <title>Wedding Invitation | Nalini & Kasun</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <audio id="bg-music" src="PERFECT%20-%20ED%20SHEERAN%20Cello%20&amp;%20Piano%20Cover%20-%20Swiss%20Duo%20PIANOCELLO.mp3" loop preload="auto"></audio>
+
+    <!-- Reusable golden rose (line-art) used in the card corners -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="golden-rose" viewBox="0 0 100 100">
+            <g fill="none" stroke="#c5a059" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Rose bloom: spiralling petals -->
+                <circle cx="50" cy="46" r="30"/>
+                <path d="M50 28 C40 30 34 38 36 48 C38 58 48 63 58 60 C66 57 69 48 65 40 C61 33 52 32 47 38 C43 43 45 51 51 53 C56 54 60 50 59 45"/>
+                <path d="M36 48 C30 46 26 40 29 34"/>
+                <path d="M58 60 C63 66 71 66 76 60"/>
+                <path d="M65 40 C71 37 74 31 71 25"/>
+                <path d="M47 38 C43 33 36 33 32 39"/>
+                <!-- Outer petal edges -->
+                <path d="M28 42 C22 48 22 58 29 63"/>
+                <path d="M40 72 C46 77 56 77 62 72"/>
+                <path d="M72 55 C78 49 78 39 71 34"/>
+                <path d="M60 24 C54 19 44 19 38 24"/>
+                <!-- Leaves and stem -->
+                <path d="M76 60 C86 62 92 72 90 84 C80 84 72 78 72 68"/>
+                <path d="M90 84 C84 80 79 74 77 67"/>
+                <path d="M29 63 C20 68 16 78 20 88 C29 86 34 78 33 69"/>
+                <path d="M20 88 C25 82 29 76 31 69"/>
+            </g>
+        </symbol>
+    </svg>
+
     <div class="scroll-container">
         <div class="sticky-viewport">
             <!-- Background & Initial Text -->
@@ -72,35 +99,44 @@
             <div class="details-layer">
                 <div class="container">
                     <div class="card" id="wedding-card">
-                        <div class="floral-top"></div>
+                        <svg class="rose rose-top" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <use href="#golden-rose"/>
+                        </svg>
                         <header>
-                            <p class="invite-text">Together with their families</p>
-                            <h1 class="couple-names">Alex & Sam</h1>
-                            <p class="request-honor">request the honor of your presence<br>at the celebration of their marriage</p>
+                            <p class="invite-text">
+                                Mr. Wasantha Kumara &amp; Mrs. Kanthi Wijesinghe<br>
+                                together with<br>
+                                Mr. Anandapala &amp; Mrs. Ajantha Rohini<br>
+                                request the honor of
+                            </p>
+                            <p class="guest-name">Mr &amp; Mrs | Miss <span class="guest">Sahan Rashmi</span></p>
+                            <p class="request-honor">to celebrate the marriage of their daughter &amp; son</p>
+                            <h1 class="couple-names">Nalini &amp; Kasun</h1>
                         </header>
-                        
+
                         <main>
                             <div class="date-time">
-                                <p class="day">Saturday</p>
                                 <div class="date-details">
-                                    <span class="month">June</span>
-                                    <span class="day-number">20</span>
-                                    <span class="year">2026</span>
+                                    <span class="month">Thursday</span>
+                                    <span class="day-number">30</span>
+                                    <span class="year">July</span>
                                 </div>
-                                <p class="time">At Four O'Clock in the Afternoon</p>
+                                <p class="time">2026</p>
                             </div>
 
                             <div class="location">
-                                <p class="venue">The Grand Ballroom</p>
-                                <p class="address">123 Celebration Lane<br>Event City, ST 12345</p>
+                                <p class="venue">At Lavenro Garden Hotel &ndash; Kosgama</p>
+                                <p class="address">From 6.00 P.M Onwards<br>(Poruwa Ceremony at 6.08 PM)</p>
                             </div>
                         </main>
 
                         <footer>
-                            <p class="reception">Reception to follow</p>
-                            <a href="#" class="rsvp-button">RSVP Online</a>
+                            <p class="reception">Please join us for a day<br>full of love, laughter and lifelong commitment!</p>
+                            <p class="rsvp-info">RSVP on or before 10th July 2026<br>Nalini 071 6635952 | Kasun 071 0477713</p>
                         </footer>
-                        <div class="floral-bottom"></div>
+                        <svg class="rose rose-bottom" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <use href="#golden-rose"/>
+                        </svg>
                     </div>
                 </div>
             </div>
