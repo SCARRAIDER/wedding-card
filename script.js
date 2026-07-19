@@ -21,12 +21,13 @@ const CONFIG = {
         // 4096px, and a lotus scaled beyond that vanishes mid-zoom, exposing
         // the hero photo. 11x of a 300px lotus stays well under the limit while
         // still covering the screen.
-        maxScale: 10,
+        maxScale: 8,
         heroFadeMultiplier: 2,  // hero text fades out twice as fast (gone by mid-phase)
-        // The white fill — not the lotus — is what hides the hero photo.
-        whiteFillStart: 0.3,
-        whiteFillEnd: 0.65,
-        lotusFadeStart: 0.6,    // fades out as the fill completes, so the pale
+        // The white fill — not the lotus — is what hides the hero photo, and it
+        // completes early so a dropped lotus frame can never expose the photo.
+        whiteFillStart: 0.1,
+        whiteFillEnd: 0.45,
+        lotusFadeStart: 0.35,   // fades out as the fill completes, so the pale
                                 // SVG core is not left sitting on a white screen
     },
 
@@ -60,11 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
         lotusInner.style.transform = `rotate(${rotProgress * CONFIG.rotation.inner}deg)`;
     };
 
-    const getScrollProgress = () => {
-        const rect = container.getBoundingClientRect();
-        const scrollableHeight = container.offsetHeight - window.innerHeight;
-        return clamp01(-rect.top / scrollableHeight);
+    // Scroll geometry is cached and refreshed on resize. Reading it per frame
+    // (via getBoundingClientRect) forces a synchronous layout on every scroll
+    // event, which is a large part of the jank on mobile.
+    let containerTop = 0;
+    let scrollableHeight = 1;
+
+    const measure = () => {
+        containerTop = container.offsetTop;
+        scrollableHeight = Math.max(1, container.offsetHeight - window.innerHeight);
     };
+
+    const getScrollProgress = () =>
+        clamp01((window.scrollY - containerTop) / scrollableHeight);
 
     // 0% - 30%: Lotus fades in on top of hero text.
     const renderFadeIn = (progress) => {
@@ -116,8 +125,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.addEventListener('scroll', render, { passive: true });
-    window.addEventListener('resize', render);
+    // Coalesce scroll events into at most one render per animation frame.
+    let ticking = false;
+    const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            render();
+            ticking = false;
+        });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+        measure();
+        onScroll();
+    });
+
+    measure();
     render();
 
     // Reveal the card once its section scrolls into view.
