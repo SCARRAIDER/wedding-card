@@ -1,10 +1,11 @@
 // Animation configuration — all tunable values live here.
 const CONFIG = {
     // Scroll progress boundaries for each animation phase (0 to 1).
+    // The details are no longer a scroll phase — they live in their own
+    // section below and reveal themselves as it scrolls into view.
     phases: {
-        fadeInEnd: 0.3,   // 0% - 30%:  lotus fades in over hero text
-        zoomEnd: 0.7,     // 30% - 70%: lotus zooms and covers the screen
-        // 70% - 100%: wedding details are revealed
+        fadeInEnd: 0.4,   // 0% - 40%:   lotus fades in over hero text
+        // 40% - 100%: lotus zooms, covering the screen in white
     },
 
     // Lotus fade-in phase.
@@ -16,24 +17,27 @@ const CONFIG = {
 
     // Lotus zoom phase.
     zoom: {
-        maxScale: 40,           // extra scale applied at the end of the zoom
+        // Kept deliberately low: mobile GPUs stop painting layers past roughly
+        // 4096px, and a lotus scaled beyond that vanishes mid-zoom, exposing
+        // the hero photo. 11x of a 300px lotus stays well under the limit while
+        // still covering the screen.
+        maxScale: 10,
         heroFadeMultiplier: 2,  // hero text fades out twice as fast (gone by mid-phase)
-        whiteFillStart: 0.8,    // point in the phase where the white fill begins
-        whiteFillSpeed: 5,      // how quickly the white fill ramps to full opacity
+        // The white fill — not the lotus — is what hides the hero photo.
+        whiteFillStart: 0.3,
+        whiteFillEnd: 0.65,
+        lotusFadeStart: 0.6,    // fades out as the fill completes, so the pale
+                                // SVG core is not left sitting on a white screen
     },
 
     // Petal rotation, applied continuously from 0% up to `rotationEnd`.
     rotation: {
-        rotationEnd: 0.7,  // scroll progress at which petals stop rotating
+        rotationEnd: 0.85,  // scroll progress at which petals stop rotating
         outer: 90,         // final rotation of the outer petals (deg)
         mid: -120,         // final rotation of the middle petals (deg)
         inner: 180,        // final rotation of the inner petals (deg)
     },
 
-    // Wedding details reveal phase.
-    details: {
-        slideDistance: 30,  // px the card slides up as it fades in
-    },
 };
 
 const clamp01 = (value) => Math.max(0, Math.min(1, value));
@@ -41,6 +45,7 @@ const clamp01 = (value) => Math.max(0, Math.min(1, value));
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.scroll-container');
     const heroContent = document.querySelector('.hero-content');
+    const heroLayer = document.querySelector('.hero-layer');
     const lotus = document.querySelector('.lotus-layer');
     const lotusOuter = document.querySelector('.lotus-petals-outer');
     const lotusMid = document.querySelector('.lotus-petals-mid');
@@ -70,40 +75,35 @@ document.addEventListener('DOMContentLoaded', () => {
         applyPetalRotation(progress);
 
         heroContent.style.opacity = 1 - p * CONFIG.fadeIn.heroFadeAmount;
+        heroLayer.style.opacity = 1;
         whiteFill.style.opacity = 0;
-        details.style.opacity = 0;
     };
 
-    // 30% - 70%: Lotus zooms and covers the text, fading the screen to white.
+    // 40% - 100%: Lotus zooms and covers the text, fading the screen to white.
     const renderZoom = (progress) => {
         const p = (progress - CONFIG.phases.fadeInEnd) /
-            (CONFIG.phases.zoomEnd - CONFIG.phases.fadeInEnd);
+            (1 - CONFIG.phases.fadeInEnd);
 
-        lotus.style.opacity = 1;
         lotus.style.transform = `scale(${1 + p * CONFIG.zoom.maxScale})`;
         applyPetalRotation(progress);
 
         heroContent.style.opacity = 1 - p * CONFIG.zoom.heroFadeMultiplier;
 
-        whiteFill.style.opacity = p > CONFIG.zoom.whiteFillStart
-            ? (p - CONFIG.zoom.whiteFillStart) * CONFIG.zoom.whiteFillSpeed
-            : 0;
+        // How far the screen has turned white. The white fill covers the hero
+        // photo on its own, so the reveal never depends on the lotus painting.
+        const cover = clamp01(
+            (p - CONFIG.zoom.whiteFillStart) /
+            (CONFIG.zoom.whiteFillEnd - CONFIG.zoom.whiteFillStart)
+        );
 
-        details.style.opacity = 0;
-        details.classList.remove('active');
-    };
+        whiteFill.style.opacity = cover;
+        heroLayer.style.opacity = 1 - cover;
 
-    // 70% - 100%: Reveal the wedding details.
-    const renderDetails = (progress) => {
-        const p = (progress - CONFIG.phases.zoomEnd) / (1 - CONFIG.phases.zoomEnd);
-
-        lotus.style.opacity = 0;
-        heroContent.style.opacity = 0;
-        whiteFill.style.opacity = 1;
-
-        details.style.opacity = p;
-        details.style.transform = `translateY(${CONFIG.details.slideDistance * (1 - p)}px)`;
-        details.classList.add('active');
+        // Fade the lotus out once it has served its purpose, rather than
+        // leaving a huge static layer sitting on screen.
+        lotus.style.opacity = 1 - clamp01(
+            (p - CONFIG.zoom.lotusFadeStart) / (1 - CONFIG.zoom.lotusFadeStart)
+        );
     };
 
     const render = () => {
@@ -111,15 +111,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (progress <= CONFIG.phases.fadeInEnd) {
             renderFadeIn(progress);
-        } else if (progress <= CONFIG.phases.zoomEnd) {
-            renderZoom(progress);
         } else {
-            renderDetails(progress);
+            renderZoom(progress);
         }
     };
 
-    window.addEventListener('scroll', render);
+    window.addEventListener('scroll', render, { passive: true });
+    window.addEventListener('resize', render);
     render();
+
+    // Reveal the card once its section scrolls into view.
+    new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                details.classList.add('visible');
+                observer.disconnect();
+            }
+        });
+    }, { threshold: 0.15 }).observe(details);
 
     // Background music: browsers block unprompted audio, so retry on the
     // first user gesture if the initial autoplay attempt is rejected.

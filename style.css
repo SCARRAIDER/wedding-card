@@ -130,24 +130,28 @@ body {
     z-index: 4;
 }
 
-/* Details Layer */
-.details-layer {
-    position: absolute;
-    width: 100%;
-    max-width: 550px;
-    /* The sticky viewport clips overflow, so a card taller than the screen
-       (common on phones) must scroll within this layer instead. */
-    max-height: 100dvh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    z-index: 10;
-    opacity: 0;
-    transform: translateY(30px);
-    pointer-events: none;
+/* Details Section — normal flow, so the card is never clipped. Its white
+   background continues seamlessly from the white-fill at the end of the zoom. */
+.details-section {
+    background-color: var(--white);
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
 }
 
-.details-layer.active {
-    pointer-events: all;
+.details-layer {
+    width: 100%;
+    max-width: 550px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.details-layer.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .card {

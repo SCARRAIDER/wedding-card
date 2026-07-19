@@ -94,8 +94,12 @@
 
             <!-- White Background Fill (Triggered by zoom) -->
             <div class="white-fill"></div>
+        </div>
+    </div>
 
-            <!-- Details Layer -->
+    <!-- Details live in normal flow, not inside the clipped sticky viewport,
+         so the card is fully readable at any height. -->
+    <section class="details-section">
             <div class="details-layer">
                 <div class="container">
                     <div class="card" id="wedding-card">
@@ -140,8 +144,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+    </section>
 
     <script src="script.js"></script>
 </body>
