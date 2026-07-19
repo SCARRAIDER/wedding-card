@@ -17,10 +17,12 @@ body {
     color: var(--text-color);
     font-family: 'Montserrat', sans-serif;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%; /* stop iOS Safari inflating text in landscape */
 }
 
 .scroll-container {
     height: 500vh; /* Total scroll depth */
+    height: 500dvh;
     position: relative;
 }
 
@@ -28,6 +30,8 @@ body {
     position: sticky;
     top: 0;
     height: 100vh;
+    /* dvh keeps the viewport correct as mobile browser chrome hides/shows */
+    height: 100dvh;
     width: 100%;
     overflow: hidden;
     display: flex;
@@ -54,18 +58,23 @@ body {
     z-index: 1;
 }
 
+.hero-content {
+    padding: 0 24px;
+}
+
 .welcome-text {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: 1.5rem;
-    letter-spacing: 4px;
+    font-size: clamp(1rem, 4vw, 1.5rem);
+    letter-spacing: clamp(2px, 1vw, 4px);
     margin-bottom: 10px;
     text-transform: uppercase;
 }
 
 .invitation-title {
     font-family: 'Great Vibes', cursive;
-    font-size: 5rem;
+    font-size: clamp(2.75rem, 11vw, 5rem);
+    line-height: 1.15;
     margin-top: 0;
 }
 
@@ -90,8 +99,8 @@ body {
 /* Lotus Layer */
 .lotus-layer {
     position: absolute;
-    width: 300px;
-    height: 300px;
+    width: min(300px, 60vw);
+    aspect-ratio: 1;
     z-index: 5;
     opacity: 0;
     transform: scale(0.5);
@@ -126,6 +135,11 @@ body {
     position: absolute;
     width: 100%;
     max-width: 550px;
+    /* The sticky viewport clips overflow, so a card taller than the screen
+       (common on phones) must scroll within this layer instead. */
+    max-height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     z-index: 10;
     opacity: 0;
     transform: translateY(30px);
@@ -138,21 +152,21 @@ body {
 
 .card {
     background-color: var(--white);
-    padding: 60px 40px;
+    padding: clamp(40px, 8vw, 60px) clamp(20px, 6vw, 40px);
     text-align: center;
     box-shadow: 0 15px 40px rgba(0,0,0,0.1);
     border: 1px solid #eee;
-    margin: 0 20px;
+    margin: 20px;
 }
 
 /* Golden rose corner decorations */
 .card { position: relative; overflow: hidden; }
-.rose { position: absolute; width: 110px; height: 110px; opacity: 0.85; pointer-events: none; }
+.rose { position: absolute; width: clamp(70px, 20vw, 110px); aspect-ratio: 1; opacity: 0.85; pointer-events: none; }
 .rose-top { top: -10px; right: -10px; }
 .rose-bottom { bottom: -10px; left: -10px; transform: rotate(180deg); }
-.couple-names { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: var(--gold); margin: 15px 0; }
-.date-details { display: flex; justify-content: center; gap: 15px; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 10px 0; width: fit-content; margin: 15px auto; }
-.day-number { font-size: 2.5rem; font-weight: bold; color: var(--gold); }
+.couple-names { font-family: 'Great Vibes', cursive; font-size: clamp(2.25rem, 9vw, 3.5rem); line-height: 1.2; color: var(--gold); margin: 15px 0; }
+.date-details { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 3vw, 15px); border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 10px 0; width: fit-content; max-width: 100%; margin: 15px auto; }
+.day-number { font-size: clamp(1.75rem, 7vw, 2.5rem); font-weight: bold; color: var(--gold); }
 .invite-text { line-height: 1.8; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
 .guest-name { text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin: 20px 0 10px; }
 .guest { font-family: 'Great Vibes', cursive; text-transform: none; font-size: 1.6rem; color: var(--gold); letter-spacing: 0; }
@@ -163,6 +177,19 @@ body {
 .rsvp-info { margin-top: 25px; font-size: 0.75rem; letter-spacing: 1px; color: #888; }
 
 @media (max-width: 600px) {
-    .invitation-title { font-size: 3rem; }
-    .lotus-layer { width: 200px; height: 200px; }
+    .card { margin: 12px; }
+    .invite-text, .guest-name, .request-honor { font-size: 0.78rem; }
+    .reception { font-size: 0.85rem; }
+    .rsvp-info { font-size: 0.7rem; }
+    /* Keep the corner roses clear of the text on narrow cards. */
+    .rose { opacity: 0.7; }
+}
+
+/* Short/landscape phones: trim vertical rhythm so the card still fits. */
+@media (max-height: 700px) {
+    .card { padding-top: 32px; padding-bottom: 32px; }
+    .couple-names { margin: 8px 0; }
+    .date-details { margin: 10px auto; }
+    .reception { margin-top: 14px; }
+    .rsvp-info { margin-top: 14px; }
 }
