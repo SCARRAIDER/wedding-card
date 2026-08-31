@@ -1,217 +1,393 @@
 :root {
-    --gold: #c5a059;
-    --dark-gold: #9e7e40;
-    --bg-color: #fcfaf7;
-    --text-color: #4a4a4a;
-    --white: #ffffff;
+  --gold: #c5a059;
+  --dark-gold: #9e7e40;
+  /* Sampled from the monogram artwork so the hero wording is the same metal
+     as the logo above it: highlight, body, and shadow tones of its gold. */
+  --gold-light: #f3e9d4;
+  --gold-mid: #d3af57;
+  --gold-deep: #b5882c;
+  --bg-color: #fcfaf7;
+  --text-color: #4a4a4a;
+  --white: #ffffff;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: 'Montserrat', sans-serif;
-    overflow-x: hidden;
-    -webkit-text-size-adjust: 100%; /* stop iOS Safari inflating text in landscape */
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  /* stop iOS Safari inflating text in landscape */
 }
 
 .scroll-container {
-    /* Total scroll depth. Kept short so the payoff arrives quickly —
+  /* Total scroll depth. Kept short so the payoff arrives quickly —
        the whole animation plays out in ~1.5 screens of scrolling. */
-    height: 250vh;
-    height: 250dvh;
-    position: relative;
+  height: 250vh;
+  height: 250dvh;
+  position: relative;
 }
 
 .sticky-viewport {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    /* dvh keeps the viewport correct as mobile browser chrome hides/shows */
-    height: 100dvh;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  /* dvh keeps the viewport correct as mobile browser chrome hides/shows */
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Hero Layer (Background Image + Text) */
 .hero-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                      url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-    background-position: center;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: white;
-    z-index: 1;
-    will-change: opacity;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Deepened from 0.4: gold needs a darker ground than white did to hold
+     contrast against the photo. */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  z-index: 1;
+  will-change: opacity;
 }
 
 .hero-content {
-    padding: 0 24px;
+  padding: 0 24px;
+}
+
+/* monogram.png carries a real alpha channel, keyed out of the black-background
+   source art. Do not go back to blending the JPEG with `mix-blend-mode: screen`:
+   the scroll animation drops .hero-content below opacity 1, which isolates it
+   into its own group, leaving the blend no backdrop and painting the black. */
+.hero-monogram {
+  display: block;
+  width: min(440px, 78vw);
+  max-height: 38vh;
+  object-fit: contain;
+  margin: 0 auto 8px;
+}
+
+/* Metallic gold lettering: the gradient runs highlight → body → shadow → back
+   to highlight, the same way the light falls across the monogram's letterforms.
+   `color` is a flat-gold fallback; only browsers that can clip a background to
+   the glyphs swap it for the gradient, so the text can never render invisible. */
+.gold-text {
+  color: var(--gold-mid);
+  background-image: linear-gradient(180deg,
+      var(--gold-light) 0%,
+      var(--gold-mid) 45%,
+      var(--gold-deep) 72%,
+      var(--gold-light) 100%);
+  /* Lifts the gold off the photo without the muddiness of a text-shadow behind
+     transparent glyphs — drop-shadow follows the letter outlines instead. */
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .gold-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .welcome-text {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: clamp(1rem, 4vw, 1.5rem);
-    letter-spacing: clamp(2px, 1vw, 4px);
-    margin-bottom: 10px;
-    text-transform: uppercase;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  letter-spacing: clamp(2px, 1vw, 4px);
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 
 .invitation-title {
-    font-family: 'Great Vibes', cursive;
-    font-size: clamp(2.75rem, 11vw, 5rem);
-    line-height: 1.15;
-    margin-top: 0;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(2.75rem, 11vw, 5rem);
+  line-height: 1.15;
+  margin-top: 0;
 }
 
 .scroll-indicator {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.8rem;
-    letter-spacing: 2px;
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  /* Too small for a gradient to read as metal — flat highlight gold instead. */
+  color: var(--gold-light);
 }
 
 .arrow {
-    width: 20px;
-    height: 20px;
-    border-bottom: 2px solid white;
-    border-right: 2px solid white;
-    transform: rotate(45deg);
-    margin: 10px auto;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid var(--gold-light);
+  border-right: 2px solid var(--gold-light);
+  transform: rotate(45deg);
+  margin: 10px auto;
 }
 
 /* Lotus Layer */
 .lotus-layer {
-    position: absolute;
-    width: min(300px, 60vw);
-    aspect-ratio: 1;
-    z-index: 5;
-    opacity: 0;
-    transform: scale(0.5);
-    pointer-events: none;
-    /* Promote to its own compositor layer so scaling is a GPU transform
+  position: absolute;
+  width: min(300px, 60vw);
+  aspect-ratio: 1;
+  z-index: 5;
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  /* Promote to its own compositor layer so scaling is a GPU transform
        rather than a repaint. */
-    will-change: transform, opacity;
-    backface-visibility: hidden;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
-.lotus-petals-outer, .lotus-petals-mid, .lotus-petals-inner {
-    transform-origin: center;
-    transform-box: view-box;
+.lotus-petals-outer,
+.lotus-petals-mid,
+.lotus-petals-inner {
+  transform-origin: center;
+  transform-box: view-box;
 }
 
 .lotus-svg {
-    width: 100%;
-    height: 100%;
-    /* No drop-shadow: it forces the browser to re-rasterise the whole SVG
+  width: 100%;
+  height: 100%;
+  /* No drop-shadow: it forces the browser to re-rasterise the whole SVG
        every frame as the lotus scales, which is the single biggest cost
        in the zoom on mobile. */
 }
 
 /* White Fill (Transitions screen to white) */
 .white-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    opacity: 0;
-    z-index: 4;
-    will-change: opacity;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  opacity: 0;
+  z-index: 4;
+  will-change: opacity;
 }
 
 /* Details Section — normal flow, so the card is never clipped. Its white
    background continues seamlessly from the white-fill at the end of the zoom. */
 .details-section {
-    background-color: var(--white);
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 0;
-    /* Overlap the tail of the animation: the screen is already white by then,
+  background-color: var(--white);
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0;
+  /* Overlap the tail of the animation: the screen is already white by then,
        so the card starts arriving as soon as the zoom finishes instead of
        after another full screen of scrolling. */
-    margin-top: -55dvh;
-    /* Must paint above the sticky viewport, or the overlap hides it and the
+  margin-top: -55dvh;
+  /* Must paint above the sticky viewport, or the overlap hides it and the
        card pops in instead of sliding over the white screen. */
-    position: relative;
-    z-index: 20;
+  position: relative;
+  z-index: 20;
 }
 
 .details-layer {
-    width: 100%;
-    max-width: 550px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  width: 100%;
+  max-width: 550px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .details-layer.visible {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .card {
-    background-color: var(--white);
-    padding: clamp(40px, 8vw, 60px) clamp(20px, 6vw, 40px);
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    border: 1px solid #eee;
-    margin: 20px;
+  background-color: var(--white);
+  padding: clamp(40px, 8vw, 60px) clamp(20px, 6vw, 40px);
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+  margin: 20px;
 }
 
-/* Golden rose corner decorations */
-.card { position: relative; overflow: hidden; }
-.rose { position: absolute; width: clamp(70px, 20vw, 110px); aspect-ratio: 1; opacity: 0.85; pointer-events: none; }
-.rose-top { top: -10px; right: -10px; }
-.rose-bottom { bottom: -10px; left: -10px; transform: rotate(180deg); }
-.couple-names { font-family: 'Great Vibes', cursive; font-size: clamp(2.25rem, 9vw, 3.5rem); line-height: 1.2; color: var(--gold); margin: 15px 0; }
-.date-details { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 3vw, 15px); border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 10px 0; width: fit-content; max-width: 100%; margin: 15px auto; }
-.day-number { font-size: clamp(1.75rem, 7vw, 2.5rem); font-weight: bold; color: var(--gold); }
-.invite-text { line-height: 1.8; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
-.guest-name { text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin: 20px 0 10px; }
-.guest { font-family: 'Great Vibes', cursive; text-transform: none; font-size: 1.6rem; color: var(--gold); letter-spacing: 0; }
-.request-honor { text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
-.venue { text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px; }
-.address { line-height: 1.6; }
-.reception { font-size: 0.9rem; line-height: 1.7; margin-top: 25px; }
-.rsvp-info { margin-top: 25px; font-size: 0.75rem; letter-spacing: 1px; color: #888; }
+/* Golden lotus corner decorations */
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.corner-lotus {
+  position: absolute;
+  color: var(--gold);
+  /* The traced stencil fills its whole viewBox — no stem below the bloom — so
+     the box is smaller than the old line-art mark to keep the flower the same
+     painted size in the corner. */
+  width: clamp(60px, 17vw, 92px);
+  aspect-ratio: 1;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.corner-lotus-top {
+  top: -10px;
+  right: -10px;
+}
+
+.corner-lotus-bottom {
+  bottom: -10px;
+  left: -10px;
+}
+
+.couple-names {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(2.25rem, 9vw, 3.5rem);
+  line-height: 1.2;
+  color: var(--gold);
+  margin: 15px 0;
+}
+
+.date-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 3vw, 15px);
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
+  padding: 10px 0;
+  width: fit-content;
+  max-width: 100%;
+  margin: 15px auto;
+}
+
+.day-number {
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
+  font-weight: bold;
+  color: var(--gold);
+}
+
+.invite-text {
+  line-height: 1.8;
+  text-transform: uppercase;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+}
+
+.guest-name {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  margin: 20px 0 10px;
+}
+
+.guest {
+  font-family: 'Great Vibes', cursive;
+  text-transform: none;
+  font-size: 1.6rem;
+  color: var(--gold);
+  letter-spacing: 0;
+}
+
+.request-honor {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.venue {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.address {
+  line-height: 1.6;
+}
+
+.reception {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-top: 25px;
+}
+
+.rsvp-info {
+  margin-top: 25px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: #888;
+}
 
 @media (max-width: 600px) {
-    .card { margin: 12px; }
-    .invite-text, .guest-name, .request-honor { font-size: 0.78rem; }
-    .reception { font-size: 0.85rem; }
-    .rsvp-info { font-size: 0.7rem; }
-    /* Keep the corner roses clear of the text on narrow cards. */
-    .rose { opacity: 0.7; }
+  .card {
+    margin: 12px;
+  }
+
+  .invite-text,
+  .guest-name,
+  .request-honor {
+    font-size: 0.78rem;
+  }
+
+  .reception {
+    font-size: 0.85rem;
+  }
+
+  .rsvp-info {
+    font-size: 0.7rem;
+  }
+
+  /* Keep the corner lotuses clear of the text on narrow cards. */
+  .corner-lotus {
+    opacity: 0.7;
+  }
 }
 
 /* Short/landscape phones: trim vertical rhythm so the card still fits. */
 @media (max-height: 700px) {
-    .card { padding-top: 32px; padding-bottom: 32px; }
-    .couple-names { margin: 8px 0; }
-    .date-details { margin: 10px auto; }
-    .reception { margin-top: 14px; }
-    .rsvp-info { margin-top: 14px; }
+
+  /* The monogram is the first thing to give up room — the scroll cue below it
+     has to stay on screen. */
+  .hero-monogram {
+    max-height: 26vh;
+  }
+
+  .card {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  .couple-names {
+    margin: 8px 0;
+  }
+
+  .date-details {
+    margin: 10px auto;
+  }
+
+  .reception {
+    margin-top: 14px;
+  }
+
+  .rsvp-info {
+    margin-top: 14px;
+  }
 }

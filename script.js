@@ -43,6 +43,49 @@ const CONFIG = {
 
 const clamp01 = (value) => Math.max(0, Math.min(1, value));
 
+// Guest personalisation. The invite is shared as a per-guest link
+// (?m=MR&f=First&l=Last), and those values fill the {{title}}/{{firstName}}/
+// {{lastName}} placeholders in the markup. Runs at parse time — the script sits
+// at the end of <body>, so the nodes exist and no placeholder is ever painted.
+(() => {
+    const params = new URLSearchParams(window.location.search);
+    const clean = (value) => (value || '').replace(/\s+/g, ' ').trim();
+
+    // Honorifics are a closed set: anything else in the link is ignored rather
+    // than printed, so a stray ?m= value can never land on the invite.
+    const TITLES = { MR: 'Mr.', MRS: 'Mrs.', MS: 'Ms.' };
+
+    const values = {
+        title: TITLES[clean(params.get('m')).toUpperCase()] || '',
+        firstName: clean(params.get('f')),
+        lastName: clean(params.get('l')),
+    };
+
+    // Walk text nodes and swap placeholders. Assigning to nodeValue keeps the
+    // guest name as text, so a name in the URL can never inject markup.
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (!node.nodeValue.includes('{{')) continue;
+        node.nodeValue = node.nodeValue.replace(
+            /\{\{(\w+)\}\}/g,
+            (match, key) => (key in values ? values[key] : match)
+        );
+    }
+
+    // With no name in the link the greeting line would be an honorific or a
+    // blank, so drop it entirely and let the invite stand on its own.
+    const guestName = document.querySelector('.guest-name');
+    if (!values.firstName && !values.lastName) {
+        guestName?.remove();
+    } else if (!values.title) {
+        // Nothing filled the {{title}} slot; trim the space it left behind.
+        guestName?.normalize();
+        const first = guestName?.firstChild;
+        if (first?.nodeType === Node.TEXT_NODE) first.nodeValue = first.nodeValue.trimStart();
+    }
+})();
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.scroll-container');
     const heroContent = document.querySelector('.hero-content');
