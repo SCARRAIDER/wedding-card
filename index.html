@@ -173,6 +173,45 @@
     </div>
   </section>
 
+  <!-- Countdown to the big day. Sits below the card in normal flow, so it is
+       only reached by scrolling past the invitation. -->
+  <section class="countdown-section">
+    <div class="countdown-layer">
+      <svg class="countdown-lotus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#golden-lotus" />
+      </svg>
+      <p class="countdown-eyebrow">Counting down to</p>
+      <h2 class="countdown-title">Our Special Day</h2>
+
+      <!-- Values are filled by script.js; the markup ships with dashes so the
+           layout never jumps between first paint and the first tick. -->
+      <div class="countdown" id="countdown" role="timer" aria-live="off">
+        <div class="countdown-unit">
+          <span class="countdown-value" data-countdown="days">--</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <span class="countdown-sep" aria-hidden="true"></span>
+        <div class="countdown-unit">
+          <span class="countdown-value" data-countdown="hours">--</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <span class="countdown-sep" aria-hidden="true"></span>
+        <div class="countdown-unit">
+          <span class="countdown-value" data-countdown="minutes">--</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <span class="countdown-sep" aria-hidden="true"></span>
+        <div class="countdown-unit">
+          <span class="countdown-value" data-countdown="seconds">--</span>
+          <span class="countdown-label">Seconds</span>
+        </div>
+      </div>
+
+      <p class="countdown-date">2nd November 2026 &middot; 9.30 AM</p>
+      <p class="countdown-message" id="countdown-message" hidden>Today is the day &mdash; we are getting married!</p>
+    </div>
+  </section>
+
   <script src="script.js"></script>
 </body>
 

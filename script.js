@@ -212,3 +212,63 @@ document.addEventListener('DOMContentLoaded', () => {
     gestures.forEach(e => window.addEventListener(e, startMusic, { passive: true }));
     startMusic();
 });
+
+// Countdown to the ceremony. The offset is written into the target so every
+// guest counts down to the same moment in Sri Lanka, whatever their own clock
+// is set to.
+(() => {
+    const TARGET = new Date('2026-11-02T09:30:00+05:30').getTime();
+
+    const layer = document.querySelector('.countdown-layer');
+    const countdown = document.getElementById('countdown');
+    const message = document.getElementById('countdown-message');
+    if (!layer || !countdown) return;
+
+    const fields = {};
+    countdown.querySelectorAll('[data-countdown]').forEach((el) => {
+        fields[el.dataset.countdown] = el;
+    });
+
+    const pad = (value) => String(value).padStart(2, '0');
+
+    const setField = (key, text) => {
+        // Only touch the DOM when the digits actually change, so the seconds
+        // tick does not repaint the whole row four times a second.
+        if (fields[key] && fields[key].textContent !== text) fields[key].textContent = text;
+    };
+
+    let timer;
+
+    const tick = () => {
+        const remaining = TARGET - Date.now();
+
+        if (remaining <= 0) {
+            clearInterval(timer);
+            setField('days', '0');
+            setField('hours', '00');
+            setField('minutes', '00');
+            setField('seconds', '00');
+            if (message) message.hidden = false;
+            return;
+        }
+
+        const totalSeconds = Math.floor(remaining / 1000);
+        setField('days', String(Math.floor(totalSeconds / 86400)));
+        setField('hours', pad(Math.floor(totalSeconds / 3600) % 24));
+        setField('minutes', pad(Math.floor(totalSeconds / 60) % 60));
+        setField('seconds', pad(totalSeconds % 60));
+    };
+
+    tick();
+    timer = setInterval(tick, 1000);
+
+    // Same reveal as the invitation card.
+    new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                layer.classList.add('visible');
+                observer.disconnect();
+            }
+        });
+    }, { threshold: 0.15 }).observe(layer);
+})();
