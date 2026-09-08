@@ -272,3 +272,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.15 }).observe(layer);
 })();
+
+// Venue section. Same reveal as the card and the countdown.
+(() => {
+    const layer = document.querySelector('.location-layer');
+    if (!layer) return;
+
+    new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                layer.classList.add('visible');
+                observer.disconnect();
+            }
+        });
+    }, { threshold: 0.15 }).observe(layer);
+})();

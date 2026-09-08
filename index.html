@@ -212,6 +212,33 @@
     </div>
   </section>
 
+  <!-- Where it happens. Sits below the countdown: the last thing a guest
+       reaches, and the one they will come back to on the day. -->
+  <section class="location-section">
+    <div class="location-layer">
+      <svg class="location-lotus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#golden-lotus" />
+      </svg>
+      <p class="location-eyebrow">Join us at</p>
+      <h2 class="location-title">The Hotel Grand Palace</h2>
+      <p class="location-address">Hikkaduwa, Southern Province<br>Sri Lanka</p>
+
+      <!-- Lazy-loaded: the map is the last thing on the page, and it should
+           never compete with the invitation for bandwidth on a phone. -->
+      <div class="location-map">
+        <iframe
+          src="https://www.google.com/maps?q=The%20Hotel%20Grand%20Palace%20Hikkaduwa&amp;output=embed"
+          title="Map showing The Hotel Grand Palace, Hikkaduwa" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+
+      <a class="location-link" href="https://www.google.com/maps/search/?api=1&amp;query=The+Hotel+Grand+Palace+Hikkaduwa"
+        target="_blank" rel="noopener noreferrer">Get Directions</a>
+
+      <p class="location-time">Monday, 2nd November 2026 &middot; From 9.30 AM<br>Poruwa Ceremony at 10 AM</p>
+    </div>
+  </section>
+
   <script src="script.js"></script>
 </body>
 
